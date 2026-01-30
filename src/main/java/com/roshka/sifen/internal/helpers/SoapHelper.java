@@ -25,17 +25,60 @@ import java.util.logging.Logger;
 public class SoapHelper {
     private final static Logger logger = Logger.getLogger(SoapHelper.class.toString());
 
-    private static void setupHttpURLConnectionProperties(HttpsURLConnection httpsConnection, SifenConfig sifenConfig) {
+    
+
+    /**
+     * SOAP 1.1 message (usa text/xml + SOAPAction)
+     */
+    public static SOAPMessage createSoapMessage11() throws SOAPException {
+        MessageFactory mf11 = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
+        return mf11.createMessage();
+    }
+private static void setupHttpURLConnectionProperties(HttpsURLConnection httpsConnection, SifenConfig sifenConfig) {
         httpsConnection.setConnectTimeout(sifenConfig.getHttpConnectTimeout());
         httpsConnection.setReadTimeout(sifenConfig.getHttpReadTimeout());
     }
 
-    private static void setupHttpURLConnectionHeaders(HttpsURLConnection httpsConnection, SifenConfig sifenConfig) {
-        httpsConnection.setRequestProperty("User-Agent", sifenConfig.getUserAgent());
-        httpsConnection.setRequestProperty("Content-Type", "application/xml; charset=utf-8");
+    private static boolean isConsultaRuc(String urlString) {
+        if (urlString == null) return false;
+        return urlString.contains("/consulta-ruc");
     }
 
+private static void setupHttpURLConnectionHeaders(HttpsURLConnection httpsConnection, SifenConfig sifenConfig, String urlString) {
+        httpsConnection.setRequestProperty("User-Agent", sifenConfig.getUserAgent());
+
+        if (isConsultaRuc(urlString) && urlString.contains("sifen-test.set.gov.py")) {
+            // SIFEN TEST: reproducir request OK (application/xml + Accept tipo navegador + sin SOAPAction)
+            httpsConnection.setRequestProperty("User-Agent", "rshk-jsifenlib/0.2.4 (LVEA)");
+            httpsConnection.setRequestProperty("Content-Type", "application/xml; charset=utf-8");
+            httpsConnection.setRequestProperty("Accept", "text/html, image/gif, image/jpeg, */*; q=0.2");
+            httpsConnection.setRequestProperty("Connection", "keep-alive");
+            logger.info("HTTP Headers (consulta-ruc TEST) - Content-Type: application/xml; charset=utf-8 ; no SOAPAction");
+        } else if (isConsultaRuc(urlString)) {
+            // Fuera de TEST: mantener SOAPAction
+            String contentType = "application/soap+xml; charset=utf-8; action=\"siConsRUC\"";
+            httpsConnection.setRequestProperty("SOAPAction", "siConsRUC");
+            httpsConnection.setRequestProperty("Content-Type", contentType);
+            logger.info("HTTP Headers (consulta-ruc) - Content-Type: " + contentType + " ; SOAPAction=siConsRUC");
+        }
+
+        // Default SOAP 1.2
+        String contentType = "application/soap+xml; charset=utf-8";
+        httpsConnection.setRequestProperty("Content-Type", contentType);
+        httpsConnection.setRequestProperty("Accept", "application/soap+xml, text/xml, */*");
+        logger.info("HTTP Headers - Content-Type: " + contentType);
+}
+
     public static SOAPMessage createSoapMessage() throws SOAPException {
+        MessageFactory mf12 = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        return mf12.createMessage();
+    }
+
+public static SOAPMessage createSoapMessage(String urlString) throws SOAPException {
+        if (isConsultaRuc(urlString)) {
+            MessageFactory mf11 = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
+            return mf11.createMessage();
+        }
         MessageFactory mf12 = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         return mf12.createMessage();
     }
@@ -44,6 +87,45 @@ public class SoapHelper {
             throws SOAPException, IOException {
         MessageFactory mf12 = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         return mf12.createMessage(null, is);
+    }
+
+
+    /**
+     * Parser tolerante: detecta SOAP 1.2 vs 1.1 mirando el namespace del Envelope.
+     */
+    private static SOAPMessage parseSoapMessageAuto(byte[] data) throws SOAPException, IOException {
+        String xml = new String(data, java.nio.charset.StandardCharsets.UTF_8);
+        MessageFactory mf;
+        if (xml.contains("http://www.w3.org/2003/05/soap-envelope")) {
+            mf = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        } else if (xml.contains("http://schemas.xmlsoap.org/soap/envelope/")) {
+            mf = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
+        } else {
+            // fallback: intentar 1.2 primero, luego 1.1
+            try {
+                mf = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+                return mf.createMessage(null, new java.io.ByteArrayInputStream(data));
+            } catch (SOAPException _e) {
+                mf = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
+            }
+        }
+        return mf.createMessage(null, new java.io.ByteArrayInputStream(data));
+    }
+public static SOAPMessage parseSoapMessage(InputStream is, String urlString)
+            throws SOAPException, IOException {
+        // Preferimos protocolo esperado por endpoint
+        try {
+            if (isConsultaRuc(urlString)) {
+                MessageFactory mf11 = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
+                return mf11.createMessage(null, is);
+            }
+            MessageFactory mf12 = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+            return mf12.createMessage(null, is);
+        } catch (SOAPException e) {
+            // Fallback: intentar el otro protocolo
+            MessageFactory mf11 = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
+            return mf11.createMessage(null, is);
+        }
     }
 
     public static SOAPResponse makeSoapRequest(SifenConfig sifenConfig, String urlString, SOAPMessage soapMessage) throws SifenException {
@@ -62,7 +144,7 @@ public class SoapHelper {
             httpsConnection.setRequestMethod("POST");
             httpsConnection.setDoOutput(true);
             setupHttpURLConnectionProperties(httpsConnection, sifenConfig);
-            setupHttpURLConnectionHeaders(httpsConnection, sifenConfig);
+            setupHttpURLConnectionHeaders(httpsConnection, sifenConfig, urlString);
 
             // Conexión
             logger.info("Conectando a: " + url);
@@ -70,6 +152,7 @@ public class SoapHelper {
 
             // Petición
             logger.info("Enviando mensaje SOAP");
+
             soapMessage.writeTo(httpsConnection.getOutputStream());
 
             // Respuesta
@@ -82,8 +165,8 @@ public class SoapHelper {
             }
 
             byte[] readData = SifenUtil.getByteArrayFromInputStream(inputStream);
-            SOAPMessage successSoapMessage = SoapHelper.parseSoapMessage(new ByteArrayInputStream(readData));
-            soapResponse.setSoapResponse(successSoapMessage);
+            SOAPMessage successSoapMessage = SoapHelper.parseSoapMessageAuto(readData);
+soapResponse.setSoapResponse(successSoapMessage);
             soapResponse.setRawData(readData);
 
             return soapResponse;

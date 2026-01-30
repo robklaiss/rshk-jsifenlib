@@ -1,0 +1,112 @@
+plugins {
+    id "java-library"
+    id "maven-publish"
+    id "signing"
+}
+
+group "com.roshka.sifen"
+version "0.2.4"
+
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    withJavadocJar()
+    withSourcesJar()
+}
+
+repositories {
+    mavenCentral()
+}
+dependencies {
+// SOAP/JAXB dependencies (removed from JDK 11+)
+    implementation "com.sun.xml.messaging.saaj:saaj-impl:1.5.3"
+    implementation "jakarta.xml.soap:jakarta.xml.soap-api:1.4.2"
+    implementation "javax.xml.bind:jaxb-api:2.3.1"
+    implementation "com.sun.xml.bind:jaxb-impl:2.3.3"
+    implementation "com.sun.xml.bind:jaxb-core:2.3.0.1"
+    implementation "javax.activation:activation:1.1.1"
+    
+    testImplementation group: "junit", name: "junit", version: "4.13.1"
+    testImplementation "org.hamcrest:hamcrest:2.2"
+    implementation 'javax.xml.soap:javax.xml.soap-api:1.4.0'
+    implementation 'com.sun.xml.messaging.saaj:saaj-impl:1.5.3'
+    implementation 'com.sun.activation:javax.activation:1.2.0'
+}
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
+javadoc {
+    options.charSet = "UTF-8"
+    options.encoding = "UTF-8"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = "rshk-jsifenlib"
+            from components.java
+
+            pom {
+                name = "RSHK jsifenlib"
+                description = "Librería de código abierto, sin dependencias externas, para interactuar con SIFEN (Sistema Integrado de Facturación Electrónica Nacional)."
+                url = "https://github.com/roshkadev/rshk-jsifenlib/"
+                licenses {
+                    license {
+                        name = "MIT License"
+                        url = "https://github.com/roshkadev/rshk-jsifenlib/blob/master/LICENCIA.md/"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "pablo"
+                        name = "Pablo Santa Cruz"
+                        email = "pablo@roshka.com"
+                    }
+                    developer {
+                        id = "david-ayala"
+                        name = "David Ayala"
+                        email = "dayala@taxit.com.py"
+                    }
+                    developer {
+                        id = "martinzarza"
+                        name = "Martin Zarza"
+                        email = "mzarza99@gmail.com"
+                    }
+                }
+                scm {
+                    connection = "scm:git:git://github.com/roshkadev/rshk-jsifenlib.git/"
+                    developerConnection = "scm:git:ssh://github.com/roshkadev/rshk-jsifenlib.git/"
+                    url = "https://github.com/roshkadev/rshk-jsifenlib/"
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username = System.getenv("OSSRH_USERNAME")
+                password = System.getenv("OSSRH_PASSWORD")
+            }
+        }
+    }
+}
+
+signing {
+    required { isReleaseVersion && gradle.taskGraph.hasTask("publish") }
+    useInMemoryPgpKeys(System.getenv("GPG_KEY"), System.getenv("GPG_PASSWORD"))
+    sign publishing.publications.mavenJava
+}
+
+
+task printRuntimeCp {
+  doLast {
+    println configurations.runtimeClasspath.asPath
+  }
+}

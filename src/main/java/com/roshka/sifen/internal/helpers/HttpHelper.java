@@ -20,8 +20,10 @@ public class HttpHelper {
             HttpURLConnection connection = (HttpURLConnection) actualURL.openConnection();
             connection.setInstanceFollowRedirects(false);
             if (connection instanceof HttpsURLConnection) {
+            if (sslSocketFactory != null) {
                 ((HttpsURLConnection) connection).setSSLSocketFactory(sslSocketFactory);
             }
+        }
             connection.setRequestMethod("GET");
             DataInputStream in = new DataInputStream(connection.getInputStream());
             connection.connect();
@@ -44,7 +46,10 @@ public class HttpHelper {
                 }
             }
 
-            System.out.println(baos);
+            String body = baos.toString("UTF-8");
+            System.out.println("BODY(300):");
+            System.out.println(body.substring(0, Math.min(300, body.length())));
+
         } catch (IOException e) {
             e.printStackTrace();
         }

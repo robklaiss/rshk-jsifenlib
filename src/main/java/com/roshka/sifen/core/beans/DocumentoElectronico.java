@@ -250,9 +250,9 @@ public class DocumentoElectronico extends SifenObjectBase {
 
         // Main Element
         SOAPBodyElement rResEnviDe = soapBody.addBodyElement(new QName(Constants.SIFEN_NS_URI, "rEnviDe"));
-        rResEnviDe.addChildElement("dId").setTextContent(String.valueOf(dId));
+        rResEnviDe.addChildElement(new QName(Constants.SIFEN_NS_URI, "dId")).setTextContent(String.valueOf(dId));
 
-        SOAPElement xDE = rResEnviDe.addChildElement("xDE");
+        SOAPElement xDE = rResEnviDe.addChildElement(new QName(Constants.SIFEN_NS_URI, "xDE"));
         this.setupDE(generationCtx, xDE, sifenConfig);
 
         return message;
@@ -281,8 +281,18 @@ public class DocumentoElectronico extends SifenObjectBase {
 
         SOAPElement DE = rDE.addChildElement("DE");
         DE.setAttribute("Id", this.getId());
-        Attr idAttribute = DE.getAttributeNode("Id");
-        DE.setIdAttributeNode(idAttribute, true);
+        // Fix for Java 17+ SAAJ compatibility: try multiple approaches to set ID attribute
+        try {
+            Attr idAttribute = DE.getAttributeNode("Id");
+            if (idAttribute != null) {
+                DE.setIdAttributeNode(idAttribute, true);
+            } else {
+                DE.setIdAttribute("Id", true);
+            }
+        } catch (Exception e) {
+            // If all else fails, the signature will still work as it references by Id value
+            logger.fine("Could not mark Id as ID attribute: " + e.getMessage());
+        }
 
         DE.addChildElement("dDVId").setTextContent(this.getdDVId());
         DE.addChildElement("dFecFirma").setTextContent(this.getdFecFirma().format(formatter));

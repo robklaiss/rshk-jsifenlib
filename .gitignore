@@ -4,3 +4,9 @@ gradle/
 .idea/
 tmp/
 src/test/resources/test.properties
+
+# Runner
+_runner/conf/sifen.properties
+_runner/build/
+_runner/.gradle/
+artifacts/

@@ -1,0 +1,26 @@
+HTTP/1.1 200 OK
+X-Backside-Transport: OK OK
+Connection: close
+User-Agent: Mozilla/5.0
+X-Forwarded-For: 181.124.224.197, 181.124.224.197
+X-Global-Transaction-ID: 7a332cb5697caeda46bb9ccf
+Cache-Control: no-transform
+Content-Type: text/xml
+Date: Fri, 30 Jan 2026 13:15:06 GMT
+Set-Cookie: ;HttpOnly;Secure
+X-FRAME-OPTIONS: SAMEORIGIN
+X-XSS-Protection: 1; mode=block
+Referrer-Policy: same-origin
+X-Content-Type-Options: nosniff
+content-security-policy:   script-src 'self' 'unsafe-inline' 'unsafe-eval' ; style-src 'self' 'unsafe-inline' ; img-src 'self' blob: https://ekuatia.set.gov.py ; connect-src 'self' ; font-src 'self' ; object-src 'self' ; media-src 'self' ; frame-src 'self' ; child-src 'self' ; form-action 'self' ; frame-ancestors 'none' ;
+X-Content-Security-Policy: script-src 'self' 'unsafe-eval' ; style-src 'self' 'unsafe-inline' ; img-src 'self' blob: https://ekuatia.set.gov.py ; connect-src 'self' ; font-src 'self' ; object-src 'self' ; media-src 'self' ; frame-src 'self' ; child-src 'self' ; form-action 'self' ; frame-ancestors 'none' ;
+Feature-Policy:  geolocation 'none'; camera 'none'; microphone 'none'; midi 'none'; usb 'none'; magnetometer 'none'; fullscreen 'none'; payment 'none'; picture-in-picture 'none'; accelerometer 'none'; vr 'none' 
+Strict-Transport-Security: max-age=15552000; includeSubDomains
+Set-Cookie: TS01a3a869=01f2e5fb23286a19ad17e2c736707dd31a9f1357bfbd40c406a06776b8f393ca9e89d8ec32b0dc05f5cda913565e262d38d63527b2; Path=/
+Vary: Accept-Encoding
+Content-Encoding: gzip
+Set-Cookie: LastMRH_Session=9808bac5;path=/;secure;HttpOnly
+Set-Cookie: MRHSession=0502ec8ae73d3c8838013c699808bac5;path=/;secure;HttpOnly
+Expires: Thu, 01 Dec 1994 16:00:00 GMT
+Transfer-Encoding: chunked
+

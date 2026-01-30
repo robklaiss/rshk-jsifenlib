@@ -1,0 +1,27 @@
+package com.roshka.sifen.test.http;
+
+import com.roshka.sifen.core.SifenConfig;
+import com.roshka.sifen.core.exceptions.SifenException;
+import com.roshka.sifen.internal.helpers.HttpHelper;
+import com.roshka.sifen.internal.helpers.SSLContextHelper;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+
+import org.junit.Test;
+
+public class HTTPTests {
+
+    @Test
+    public void testWSDLConnection() throws SifenException {
+        String url = "https://sifen-test.set.gov.py/de/ws/consultas/consulta-ruc.wsdl?wsdl";
+
+        // IMPORTANT: cargar config desde -D... (System properties)
+        SifenConfig cfg = SifenConfig.cargarConfiguracion(System.getProperties());
+
+        SSLContext ctx = SSLContextHelper.getContextFromConfig(cfg);
+        SSLSocketFactory sf = (ctx != null) ? ctx.getSocketFactory() : null;
+
+        HttpHelper.request(sf, url);
+    }
+}

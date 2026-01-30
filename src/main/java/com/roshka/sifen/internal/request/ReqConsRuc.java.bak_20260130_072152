@@ -1,0 +1,148 @@
+package com.roshka.sifen.internal.request;
+
+import com.roshka.sifen.core.SifenConfig;
+import com.roshka.sifen.core.beans.response.RespuestaConsultaRUC;
+import com.roshka.sifen.core.exceptions.SifenException;
+import com.roshka.sifen.internal.Constants;
+import com.roshka.sifen.internal.SOAPResponse;
+import com.roshka.sifen.internal.ctx.GenerationCtx;
+import com.roshka.sifen.internal.helpers.SoapHelper;
+import com.roshka.sifen.internal.response.BaseResponse;
+import com.roshka.sifen.internal.response.SifenObjectFactory;
+import com.roshka.sifen.internal.util.ResponseUtil;
+import com.roshka.sifen.internal.util.SifenExceptionUtil;
+import org.w3c.dom.Node;
+
+import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPBodyElement;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
+import java.nio.charset.StandardCharsets;
+import java.util.logging.Logger;
+
+/**
+ * Clase encargada de la Consulta de RUC.
+ */
+public class ReqConsRuc extends BaseRequest {
+    private String dRUCCons;
+    private final static Logger logger = Logger.getLogger(ReqConsRuc.class.toString());
+
+    public ReqConsRuc(long dId, SifenConfig sifenConfig) {
+        super(dId, sifenConfig);
+    }
+
+    @Override
+    SOAPMessage setupSoapMessage(GenerationCtx generationCtx) throws SifenException {
+        try {
+            // Main Element
+            SOAPMessage message = SoapHelper.createSoapMessage(sifenConfig.getUrlBase() + sifenConfig.getPathConsultaRUC());
+            SOAPBody soapBody = message.getSOAPBody();
+            SOAPBodyElement rResEnviConsRUC = soapBody.addBodyElement(new QName(Constants.SIFEN_NS_URI, "rEnviConsRUC"));
+
+            // Elements - deben tener el namespace del parent
+            rResEnviConsRUC.addChildElement(new QName(Constants.SIFEN_NS_URI, "dId")).setTextContent(String.valueOf(this.getdId()));
+            rResEnviConsRUC.addChildElement(new QName(Constants.SIFEN_NS_URI, "dRUCCons")).setTextContent(this.dRUCCons);
+
+            return message;
+        } catch (SOAPException e) {
+            throw SifenExceptionUtil.requestPreparationError("Ocurrió un error al preparar el cuerpo de la petición SOAP", e);
+        }
+    }
+
+    @Override
+    BaseResponse processResponse(SOAPResponse soapResponse) throws SifenException {
+        Node mainNode = null;
+        String foundNodeName = null;
+        
+        // Intentar con variantes de nombre del nodo esperado (case sensitivity)
+        String[] nodeNameVariants = {"rResEnviConsRuc", "rResEnviConsRUC"};
+        for (String nodeName : nodeNameVariants) {
+            try {
+                mainNode = ResponseUtil.getMainNode(soapResponse.getSoapResponse(), nodeName);
+                if (mainNode != null) {
+                    foundNodeName = nodeName;
+                    logger.info("Nodo de respuesta encontrado: " + nodeName);
+                    break;
+                }
+            } catch (SifenException e) {
+                logger.fine("Nodo " + nodeName + " no encontrado: " + e.getMessage());
+            }
+        }
+        
+        // Si no encontramos el nodo esperado, intentar con rRetEnviDe (respuesta de error del servidor)
+        if (mainNode == null) {
+            try {
+                mainNode = ResponseUtil.getMainNode(soapResponse.getSoapResponse(), "rRetEnviDe");
+                if (mainNode != null) {
+                    foundNodeName = "rRetEnviDe";
+                    logger.warning("Servidor devolvió rRetEnviDe en lugar de rResEnviConsRUC - posible error de ruteo SIFEN");
+                }
+            } catch (SifenException e) {
+                logger.fine("Nodo rRetEnviDe no encontrado: " + e.getMessage());
+            }
+        }
+        
+        if (mainNode == null) {
+            logger.warning("No se encontró ningún nodo de respuesta válido para Consulta RUC");
+        }
+
+        RespuestaConsultaRUC respuestaConsultaRUC = new RespuestaConsultaRUC();
+        if (mainNode != null) {
+            // Extraer info de error manualmente si es rRetEnviDe
+            if ("rRetEnviDe".equals(foundNodeName)) {
+                extractErrorFromRRetEnviDe(mainNode, respuestaConsultaRUC);
+            } else {
+                respuestaConsultaRUC = SifenObjectFactory.getFromNode(mainNode, RespuestaConsultaRUC.class);
+            }
+        }
+
+        respuestaConsultaRUC.setCodigoEstado(soapResponse.getStatus());
+        respuestaConsultaRUC.setRespuestaBruta(new String(soapResponse.getRawData(), StandardCharsets.UTF_8));
+        return respuestaConsultaRUC;
+    }
+    
+    private void extractErrorFromRRetEnviDe(Node rRetEnviDe, RespuestaConsultaRUC respuesta) {
+        // Estructura: rRetEnviDe/rProtDe/gResProc/{dCodRes, dMsgRes}
+        try {
+            Node rProtDe = findChildNode(rRetEnviDe, "rProtDe");
+            if (rProtDe != null) {
+                Node gResProc = findChildNode(rProtDe, "gResProc");
+                if (gResProc != null) {
+                    Node dCodResNode = findChildNode(gResProc, "dCodRes");
+                    Node dMsgResNode = findChildNode(gResProc, "dMsgRes");
+                    if (dCodResNode != null) {
+                        respuesta.setdCodRes(dCodResNode.getTextContent());
+                    }
+                    if (dMsgResNode != null) {
+                        respuesta.setdMsgRes(dMsgResNode.getTextContent());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.warning("Error extrayendo info de rRetEnviDe: " + e.getMessage());
+        }
+    }
+    
+    private Node findChildNode(Node parent, String localName) {
+        if (parent == null) return null;
+        for (int i = 0; i < parent.getChildNodes().getLength(); i++) {
+            Node child = parent.getChildNodes().item(i);
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                String childLocalName = child.getLocalName() != null ? child.getLocalName() : child.getNodeName();
+                // Remover prefijo de namespace si existe
+                if (childLocalName.contains(":")) {
+                    childLocalName = childLocalName.substring(childLocalName.indexOf(":") + 1);
+                }
+                if (localName.equalsIgnoreCase(childLocalName)) {
+                    return child;
+                }
+            }
+        }
+        return null;
+    }
+
+    public void setdRUCCons(String dRUCCons) {
+        this.dRUCCons = dRUCCons;
+    }
+}

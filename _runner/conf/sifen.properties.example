@@ -1,0 +1,32 @@
+# ===========================================
+# SIFEN Configuration - EXAMPLE FILE
+# Copy to sifen.properties and fill real values
+# ===========================================
+
+# Ambiente: DEV (test) o PROD (produccion)
+sifen.ambiente=DEV
+
+# Certificado cliente PFX
+sifen.certificado_cliente.usar=true
+sifen.certificado_cliente.tipo=PFX
+sifen.certificado_cliente.archivo=/ruta/a/tu/certificado.p12
+sifen.certificado_cliente.contrasena=TU_CONTRASENA_AQUI
+
+# CSC (Codigo de Seguridad del Contribuyente)
+# Para ambiente DEV, usar los de prueba de la SET
+sifen.csc=ABCD0000000000000000000000000000
+sifen.csc.id=0001
+
+# Habilitar Nota Tecnica 13 (nuevos campos)
+sifen.habilitar_nota_tecnica_13=true
+
+# ===========================================
+# Runner Configuration
+# ===========================================
+
+# RUC a consultar (sin digito verificador)
+runner.ruc_sin_dv=80089752
+
+# Path al XML del DE a enviar (opcional)
+# Si no se configura, solo se ejecuta consultaRUC
+# runner.de_xml_path=/ruta/a/tu/documento.xml

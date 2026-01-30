@@ -1,0 +1,67 @@
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner main
+INFO: === RSHK-JSIFENLIB RUNNER E2E ===
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner main
+INFO: Run ID: run_20260130_032730
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner main
+INFO: Artifacts dir: /Users/robinklaiss/Dev/rshk-jsifenlib/artifacts/run_20260130_032730
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner main
+INFO: Loading config from: _runner/conf/sifen.properties
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner copySanitizedProperties
+INFO: Sanitized properties saved to: artifacts/run_20260130_032730/sifen.properties
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.Sifen setSifenConfig
+INFO: Configuración de Sifen guardada correctamente
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner main
+INFO: Ambiente: DEV
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner main
+INFO: URL Base: https://sifen-test.set.gov.py
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner runConsultaRUC
+INFO: 
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner runConsultaRUC
+INFO: === TEST: Consulta RUC ===
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner runConsultaRUC
+INFO: Consultando RUC: 4554737
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.Sifen consultaRUC
+INFO: Preparando petición 'Consulta de RUC'
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.internal.request.BaseRequest makeRequest
+INFO: XML generado, se realiza la petición
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.internal.request.BaseRequest makeRequest
+INFO: Este es el xml a enviarse a la SIFEN 
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"><env:Header/><env:Body><rEnviConsRUC xmlns="http://ekuatia.set.gov.py/sifen/xsd"><dId>1</dId><dRUCCons>4554737</dRUCCons></rEnviConsRUC></env:Body></env:Envelope>
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.internal.helpers.SSLContextHelper getContextFromConfig
+INFO: Contexto SSL no cargado aún. Empezando carga...
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.internal.helpers.SoapHelper makeSoapRequest
+INFO: Conectando a: https://sifen-test.set.gov.py/de/ws/consultas/consulta-ruc.wsdl
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.internal.helpers.SoapHelper makeSoapRequest
+INFO: Enviando mensaje SOAP
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.internal.request.ReqConsRuc processResponse
+WARNING: El nombre del nodo [rRetEnviDe] no coincide con el nombre esperado [rResEnviConsRuc]
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.internal.request.BaseRequest makeRequest
+INFO: Petición realizada, se formatea la respuesta
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner runConsultaRUC
+INFO: HTTP Status: 400
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner runConsultaRUC
+INFO: dCodRes: null
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner runConsultaRUC
+INFO: dMsgRes: null
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner runConsultaRUC
+INFO: Consulta RUC: FAILED
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner runRecepcionDE
+INFO: 
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner runRecepcionDE
+INFO: === TEST: Recepcion DE ===
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner runRecepcionDE
+INFO: DE XML path: /Users/robinklaiss/Dev/rshk-jsifenlib/_runner/conf/de_base.xml
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner runRecepcionDE
+INFO: DE XML loaded, length: 8441 chars
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner runRecepcionDE
+INFO: DE XML cleaned, length: 8441 chars
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner runRecepcionDE
+WARNING: Error en recepcionDE (possibly pre-signed XML): Cannot invoke "String.hashCode()" because "<local2>" is null
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner runRecepcionDE
+WARNING: NOTE: This library cannot send pre-signed XML. It must sign the DE itself.
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner writeResult
+INFO: Final result saved to result.json
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner main
+INFO: === RUNNER COMPLETED ===
+Jan 30, 2026 3:27:30 AM com.roshka.sifen.runner.Runner main
+INFO: Check artifacts at: /Users/robinklaiss/Dev/rshk-jsifenlib/artifacts/run_20260130_032730

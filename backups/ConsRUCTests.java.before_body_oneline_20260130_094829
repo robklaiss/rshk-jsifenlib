@@ -1,0 +1,81 @@
+package com.roshka.sifen.test.http;
+
+import com.roshka.sifen.core.SifenConfig;
+import com.roshka.sifen.core.exceptions.SifenException;
+import com.roshka.sifen.internal.helpers.SSLContextHelper;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import java.io.*;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+
+import org.junit.Test;
+
+public class ConsRUCTests {
+
+    @Test
+    public void testConsRUC_POST_SOAP12() throws Exception {
+        // endpoint "real" (no WSDL)
+        String url = "https://sifen-test.set.gov.py/de/ws/consultas/consulta-ruc.wsdl";
+
+        SifenConfig cfg = new SifenConfig();
+
+        // aplicar -D... a cfg
+        cfg.setUsarCertificadoCliente(Boolean.parseBoolean(System.getProperty("sifen.certificado_cliente.usar", "false")));
+        String tipo = System.getProperty("sifen.certificado_cliente.tipo", "PFX");
+        try { cfg.setTipoCertificadoCliente(SifenConfig.TipoCertificadoCliente.valueOf(tipo)); }
+        catch (Exception ignored) { cfg.setTipoCertificadoCliente(SifenConfig.TipoCertificadoCliente.PFX); }
+
+        cfg.setCertificadoCliente(System.getProperty("sifen.certificado_cliente.archivo"));
+        cfg.setContrasenaCertificadoCliente(System.getProperty("sifen.certificado_cliente.contrasena"));
+
+        SSLContext ctx = SSLContextHelper.getContextFromConfig(cfg);
+
+        // SOAP 1.2 envelope mínimo (siConsRUC)
+        // OJO: El payload exacto puede variar, pero queremos VER respuesta del servidor (200/500 + body).
+        String xml =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+              + "<soap12:Envelope xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:ns0=\"http://ekuatia.set.gov.py/sifen/xsd\">"
+              + "  <soap12:Body>"
+              + "    <ns0:siConsRUC>"
+              + "      <ns0:dRUCCons>4554737</ns0:dRUCCons>"
+              + "    </ns0:siConsRUC>"
+              + "  </soap12:Body>"
+              + "</soap12:Envelope>";
+
+        HttpsURLConnection conn = (HttpsURLConnection) new URL(url).openConnection();
+        conn.setSSLSocketFactory(ctx.getSocketFactory());
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+        
+conn.setRequestProperty("Content-Type", "application/soap+xml; charset=utf-8; action=\"siConsRUC\"");
+        conn.setRequestProperty("SOAPAction", "\"siConsRUC\"");
+        conn.setRequestProperty("Accept", "application/soap+xml, text/xml, */*");
+        conn.setRequestProperty("Connection", "close");
+
+        try (OutputStream os = conn.getOutputStream()) {
+            os.write(xml.getBytes(StandardCharsets.UTF_8));
+        }
+
+        int code = conn.getResponseCode();
+        
+System.out.println("HTTP CODE: " + code);
+        System.out.println("Content-Type: " + conn.getHeaderField("Content-Type"));
+
+        InputStream is = (code >= 400) ? conn.getErrorStream() : conn.getInputStream();
+        if (is != null) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] buf = new byte[4096];
+            int n;
+            while ((n = is.read(buf)) != -1 && baos.size() < 8000) {
+                baos.write(buf, 0, n);
+            }
+            String body = baos.toString("UTF-8");
+            System.out.println("BODY(800):");
+            System.out.println(body.substring(0, Math.min(800, body.length())));
+        } else {
+            System.out.println("BODY: <null stream>");
+        }
+    }
+}

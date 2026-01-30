@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group 'com.roshka.sifen'
+version '1.0.0'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation files('../build/libs/rshk-jsifenlib-0.2.4.jar')
+}
+
+application {
+    mainClass = 'com.roshka.sifen.runner.Runner'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.roshka.sifen.runner.Runner'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveBaseName = 'runner'
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+tasks.register('runRunner', JavaExec) {
+    group = 'application'
+    mainClass = 'com.roshka.sifen.runner.Runner'
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir = projectDir
+}

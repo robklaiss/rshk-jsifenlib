@@ -1,0 +1,265 @@
+== Info: Host sifen-test.set.gov.py:443 was resolved.
+== Info: IPv6: (none)
+== Info: IPv4: 201.131.51.6
+== Info:   Trying 201.131.51.6:443...
+== Info: Connected to sifen-test.set.gov.py (201.131.51.6) port 443
+== Info: ALPN: curl offers http/1.1
+== Info: (304) (OUT), TLS handshake, Client hello (1):
+=> Send SSL data, 319 bytes (0x13f)
+0000: ...;...0*...X,.K..*.z]yS..x.+<.....U4. .S.h_3qx.."w.m..,.[..Zz.G
+0040: ...^?]..b.............0.,.(.$.......k.9...........=.5...../.+.'.
+0080: #.......g.3...E...<./...A.......................+........3.&.$..
+00c0: . F.....8.............G.!.A..4..|..........sifen-test.set.gov.py
+0100: .......................................................http/1.1
+== Info: (304) (IN), TLS handshake, Server hello (2):
+<= Recv SSL data, 81 bytes (0x51)
+0000: ...M...Og..2....6..........cK..^aK..n. )uC.m.&[..z....Av~.....xh
+0040: P'.E.............
+== Info: TLSv1.2 (IN), TLS handshake, Certificate (11):
+<= Recv SSL data, 4186 bytes (0x105a)
+0000: ...V..S...0...0.............G.G.;..E.5.2.0...*.H........0Y1.0...
+0040: U....US1.0...U....DigiCert Inc1301..U...*DigiCert Global G2 TLS 
+0080: RSA SHA256 2020 CA10...250916000000Z..261001235959Z0n1.0...U....
+00c0: PY1.0...U....Asunci..n1402..U...+Direcci..n Nacional de Ingresos
+0100:  Tributarios1.0...U....*.set.gov.py0.."0...*.H.............0....
+0140: .....E..M-.....F}i..So.......4..5...*M5..]..}...R.......X.b..d./
+0180: ..y....RN.?..1....0..........#dZ70...m.F..8K0.....O7....R.......
+01c0: .S.....n1......QO.b...W...&y.....<.J9....;..A........+9..y#./...
+0200: .?y!..(.Vn.h.`E/...%x...__f.D.@.B..O.w...Q....}..3j..a....%.,..%
+0240: ...*VIg..Y.Gd...B3...z..h...P^c....`.C..1<.Y8.....H.p%......*"..
+0280: -.n.....@H.a...".<.............z....,.6...'...:.r.....K.=g..V-'.
+02c0: ]......G...OO.aj....\..._....8...;A.`.......6.+..7*.Q....2..4.3.
+0300: ...dJ.N......D%.QiR..Q...$.....O.....(h1.2...q..'.j...g..>!.~.;+
+0340: .:...........0...0...U.#..0...t...f..7...)7.......0...U.........
+0380: e.X.*B.J]3.Hfz...0#..U....0...*.set.gov.py..set.gov.py0>..U. .70
+03c0: 503..g.....0)0'..+.........http://www.digicert.com/CPS0...U.....
+0400: ......0...U.%..0...+.........+.......0....U.....0..0H.F.D.Bhttp:
+0440: //crl3.digicert.com/DigiCertGlobalG2TLSRSASHA2562020CA1-1.crl0H.
+0480: F.D.Bhttp://crl4.digicert.com/DigiCertGlobalG2TLSRSASHA2562020CA
+04c0: 1-1.crl0....+........{0y0$..+.....0...http://ocsp.digicert.com0Q
+0500: ..+.....0..Ehttp://cacerts.digicert.com/DigiCertGlobalG2TLSRSASH
+0540: A2562020CA1-1.crt0...U.......0.0.....+.....y......o...k.i.w..m}.
+0580: ...w..._......3Ze....s....iw....SRp2.....H0F.!.....O......h..{D.
+05c0: l(....&..I/.....!..[...0.O...t.....j..u.8..^.S...n.v..1~WE..E..8
+0600: ...A...!Z".....v...R.....SRpu.....G0E. ..5'.q..AbK>O.5.$...H..1.
+0640: ......0.!..V.vkh....Z.f.ko.%lA..4+.j...;...v..NC........$&..e...
+0680: _8..?rg}U7.......SRp......G0E. n.....a.K.......zL.0..UcA.._S....
+06c0: !.../.>5..7>...T.......r..6k.3Smj.0...*.H..............1.97>.C.|
+0700: z....D-+...rF.\.......^t1....J......8..Y.........9..#.!.Y.......
+0740: .Z.r=.e.l...GwTF.......?i....K....GX...T....Y.*.>..'}.?...k`cK&T
+0780: ;.w..../\y..|.b...}...".THO*...........v%&WZ..... S..!.IU.u.F.>.
+07c0: .Q.....K....<._a]u. }H!..s~|i...F~(.@X..e..U...u....N....0...0..
+0800: ............+V..z.P,#..f0...*.H........0a1.0...U....US1.0...U...
+0840: .DigiCert Inc1.0...U....www.digicert.com1 0...U....DigiCert Glob
+0880: al Root G20...210330000000Z..310329235959Z0Y1.0...U....US1.0...U
+08c0: ....DigiCert Inc1301..U...*DigiCert Global G2 TLS RSA SHA256 202
+0900: 0 CA10.."0...*.H.............0...........bO..co..RV.m'{z.V......
+0940: ......`A.p....'..W8[}.Q.q..jA.[5..{....$0.V...}.....M.......".1"
+0980: .ai.&.x....}f.uD.s....]..YC...:..H..k7.c..F..E.}#...Q..Q._.IFT.,
+09c0: .......<...9.i.2...WL.GB|...}..MT.B.....w..H....*...Cp.?vk.LI.$^
+0a00: ....F..l..bRBu....^^..a........=...Gi..........0..~0...U.......0
+0a40: .......0...U......t...f..7...)7.......0...U.#..0...N"T ....n....
+0a80: ......90...U...........0...U.%..0...+.........+.......0v..+.....
+0ac0: ...j0h0$..+.....0...http://ocsp.digicert.com0@..+.....0..4http:/
+0b00: /cacerts.digicert.com/DigiCertGlobalRootG2.crt0B..U...;0907.5.3.
+0b40: 1http://crl3.digicert.com/DigiCertGlobalRootG2.crl0=..U. .6040..
+0b80: .`.H...l..0...g....0...g.....0...g.....0...g.....0...*.H........
+0bc0: .......p.(.i.|t...&{S...e.......ZC..MLV_..... .Y..J..*......J;..
+0c00: .o.).0?$....{..,..kv3..UR.Y..............r..._....2u...X.W1~7...
+0c40: fm)..f.m.n..../...\Vd..}..8S..]Fm\.'...~....R....7|*..UZ8r.....L
+0c80: s..75.).i.v...{.....g...Z!....?......Y.#.$*.%L........t..m......
+0cc0: .@......0...0..v........:.......(d.....0...*.H........0a1.0...U.
+0d00: ...US1.0...U....DigiCert Inc1.0...U....www.digicert.com1 0...U..
+0d40: ..DigiCert Global Root G20...130801120000Z..380115120000Z0a1.0..
+0d80: .U....US1.0...U....DigiCert Inc1.0...U....www.digicert.com1 0...
+0dc0: U....DigiCert Global Root G20.."0...*.H.............0.........7.
+0e00: 4.{k..h..Ju.F.!.....T.......:..<z....k..-.^.$D.b.~...~.Tu ..P..c
+0e40: .l0..............7...CN.{,..../....:....%..k.`.`.O!I..g..a......
+0e80: ...2k..W.]........I.5-..Im.w..IK..U......#.LmE.....0..LU.'JW.|..
+0ec0: .s...J...P........!..........g(.s..=Fv....!4M..E..I......3.)....
+0f00: ...B0@0...U.......0....0...U...........0...U......N"T ....n.....
+0f40: .....90...*.H.............`g(.o.Hc.1..g...}<..J....+..._sw*2.9.g
+0f80: B.#.Eg5......a.4.. L....5.v...B..D...6t$Z.l..Y5..I......G*=./.\.
+0fc0: .. .._SF..h...0.>1.........>5.._..pPpGA.W.N......../.%.u.....o..
+1000: Aq..*.O. U...E..D....2...SF.,...".K..E.....X..}R..YC....&.o....7
+1040: }.....w_v.<..]V[..fn.57.2.
+== Info: TLSv1.2 (IN), TLS handshake, Server key exchange (12):
+<= Recv SSL data, 1039 bytes (0x40f)
+0000: ................TX..J...V '=<......-6...6A.d3.....$.>.}/.cc.u...
+0040: ....az......ea$3.._.n..ceU=....W.^.W.5.O.p...w.......r..X.6..50.
+0080: .OH:yz.....$.a...K.....j..`..h.OB..9M..V..cr........mp.........4
+00c0: ..(4/a.r.......O.2......;.Lo.s;..... .....}.....J&.....kB8a(\...
+0100: ...........\....].|BC..B'Jzo\s...g.x.....o... G...........F.5.=.
+0140: .M|...a.n...b...\]....d.:.y..T.{&c#.....W.....x...@jY..O..N.....
+0180: !{LC...h=.61...g.+..............M.F3...........,U..#..=....n.a..
+01c0: ....)....e....~Yio7|.oY[aM..C..@..w...t...C.........A5....GB..d.
+0200: e.................8.R........X.c.~..F_.t.o4.. ...C.X...^....D...
+0240: x...L:.......f(.O..4O.r.b..V.}..=........%..P......@ny.#..yR....
+0280: H#e...<8O.Z..1f..W.........c......Z$.4N....T.....m.w..~...(Y..i.
+02c0: .v...5k.j.K.!.|LU)C...G.../............F...XfO.~..J..........Nv;
+0300: .{.y.5..w..%..2.....1..6..........Fx....d?..o6&..u.E'...U.a.nm/k
+0340: ..d.........o.;......k.$.Z...\..zM.:....@d%.YT.......E.........L
+0380: ..^.P.,.....W....-..N.GdF|'......<iL?.....C....K.c......-hB...rn
+03c0: x..<.......u...G.^x5.xE.J........Lc(....%.j...$.fsA.......t....'
+0400: ;WEY.....M;.-r.
+== Info: TLSv1.2 (IN), TLS handshake, Request CERT (13):
+<= Recv SSL data, 18 bytes (0x12)
+0000: .......@..........
+== Info: TLSv1.2 (IN), TLS handshake, Server finished (14):
+<= Recv SSL data, 4 bytes (0x4)
+0000: ....
+== Info: TLSv1.2 (OUT), TLS handshake, Certificate (11):
+=> Send SSL data, 2238 bytes (0x8be)
+0000: ..........0...0..................0...*.H........0Z1.0...U....CA-
+0040: DOCUMENTA S.A.1.0...U....RUC80050172-11.0...U....DOCUMENTA S.A.1
+0080: .0...U....PY0...251229135000Z..261229135000Z0..1$0"..U....MARCIO
+00c0:  RUBEN FERIS AGUILERA1.0...U....CI45547371.0...U.*..MARCIO RUBEN
+0100: 1.0...U....FERIS AGUILERA1.0...U....F11+0)..U..."CERTIFICADO CUA
+0140: LIFICADO TRIBUTARIO1.0...U....PY0.."0...*.H.............0.......
+0180: ....W....id[..6..'..5.N...]s....S...f..i..Q...j..h...L..b.V.D..t
+01c0: ..y](...pJ....o..s.Y...P*f.3^.D....3...0.L..D...c..X......Q%{68^
+0200: .WR.&%EB.cng<.G.]?B-.....p.C................V?......FZ...I.o...A
+0240: .M.W....:.........{...878.d....Bifxk..x.LR.u...|n..-.....e...EK.
+0280: ......... 0...0...U.......0.0...U.#..0....=.+..,..9...S;X...{0..
+02c0: ..+..........0..0U..+.....0..Ihttps://www.digito.com.py/uploads/
+0300: certificado-documenta-sa-1535117771.crt0+..+.....0...https://www
+0340: .digito.com.py/ocsp/0....U.....0....juliaemongesa82@gmail.com.j0
+0380: h1)0'..U... FIRMA ELECTRONICA de nivel medio1.0...U....RUC455473
+03c0: 7-81$0"..U....MARCIO RUBEN FERIS AGUILERA0.....U. ....0...0.....
+0400: +......;.....0...0/..+........#https://www.digito.com.py/descarg
+0440: as0.....+.......0..~...z.C.e.r.t.i.f.i.c.a.d.o. .c.u.a.l.i.f.i.c
+0480: .a.d.o. .d.e. .f.i.r.m.a. .e.l.e.c.t.r...n.i.c.a. .t.i.p.o. .F.1
+04c0: . .(.c.l.a.v.e.s. .e.n. .m...d.u.l.o. .s.o.f.t.w.a.r.e.).,. .s.u
+0500: .j.e.t.a. .a. .l.a.s. .c.o.n.d.i.c.i.o.n.e.s. .d.e. .u.s.o. .e.x
+0540: .p.u.e.s.t.a.s. .e.n. .l.a. .D.e.c.l.a.r.a.c.i...n. .d.e. .P.r..
+0580: .c.t.i.c.a.s. .d.e. .C.e.r.t.i.f.i.c.a.c.i...n. .d.e. .D.O.C.U.M
+05c0: .E.N.T.A. .S...A..0*..U.%.... 0...+.........+.........+.......0{
+0600: ..U...t0r04.2.0..https://www.digito.com.py/crl/documenta_ca.crl0
+0640: :.8.6.4https://www.documenta.com.py/digito/documenta_ca.crl0...U
+0680: ......{...{h...i....o...J.0...U...........0...*.H...............
+06c0: ......S.k..........|i^.j.;8U..K.m..)..%xH..n8....2....[....6qE.S
+0700: !../=..{..bLc%.kR..;...4dh....g....*5.....\..@-....y..y!.....vfK
+0740: s..%..`.!....C..q[n.....I.7.=.d..[.Q......+.C.i.9.Z...........h.
+0780: 4)..a...<.........../K.....Nz..|.;#.J.Z...N+p..*p.x.g.x.$G...R.W
+07c0: .]....~.....%.GC.?...F=L.M...B..Wy.4&V`...b..e<.....xD.WL...0...
+0800: M.X. ;......;.J....p....wq.P...Q......b...R.....Z.=...~e.,-;..F|
+0840: .".........tVQ7..K.5h...?..i:...7.'u.?...i.g........[H.S.....h..
+0880: .K....PXoa......W...3. .a....Q].L............c........?...}w.U
+== Info: TLSv1.2 (OUT), TLS handshake, Client key exchange (16):
+=> Send SSL data, 262 bytes (0x106)
+0000: ..........R`Mp.[Q..k.:.....#..K.]g@.."..8.6q'.X..X.V.C....t|]E..
+0040: ..:4.......N.s.>xP.n._n..<.p.f.l.|.(o...........x..a&.[...,y.~..
+0080: W.Y..-..$..]..g.....cE...."....4F..w....T..F)i.?m..f./x}.......u
+00c0: .+H.u...."..sL`....N"......=...k).#......{TZq..AO...M.S.....e.fD
+0100: w..[..
+== Info: TLSv1.2 (OUT), TLS handshake, CERT verify (15):
+=> Send SSL data, 264 bytes (0x108)
+0000: .........jJ.QpA...N..D....ud.'.s........V.b.....C.q.V.oq.;.....Y
+0040: k\R...Id.8......?..Z...!..Z[...-...*.%..........=..9J....."..y..
+0080: ...p)S...\..O5...0...o.........l..r..E......%........q.S....+@/.
+00c0: +..p.:0...*w...#...}:D.b.7.&UN....T&t....e'm.>.5.t.+W......t.T..
+0100: ,../..?.
+== Info: TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):
+=> Send SSL data, 1 bytes (0x1)
+0000: .
+== Info: TLSv1.2 (OUT), TLS handshake, Finished (20):
+=> Send SSL data, 16 bytes (0x10)
+0000: .......'...'.hP.
+== Info: TLSv1.2 (IN), TLS change cipher, Change cipher spec (1):
+<= Recv SSL data, 1 bytes (0x1)
+0000: .
+== Info: TLSv1.2 (IN), TLS handshake, Finished (20):
+<= Recv SSL data, 16 bytes (0x10)
+0000: ....sZc).x...ta.
+== Info: SSL connection using TLSv1.2 / DHE-RSA-AES128-GCM-SHA256 / [blank] / UNDEF
+== Info: ALPN: server did not agree on a protocol. Uses default.
+== Info: Server certificate:
+== Info:  subject: C=PY; L=Asunción; O=Dirección Nacional de Ingresos Tributarios; CN=*.set.gov.py
+== Info:  start date: Sep 16 00:00:00 2025 GMT
+== Info:  expire date: Oct  1 23:59:59 2026 GMT
+== Info:  issuer: C=US; O=DigiCert Inc; CN=DigiCert Global G2 TLS RSA SHA256 2020 CA1
+== Info:  SSL certificate verify ok.
+== Info: using HTTP/1.x
+=> Send header, 194 bytes (0xc2)
+0000: GET /de/ws/consultas/consulta-ruc.wsdl HTTP/1.1
+0031: Host: sifen-test.set.gov.py
+004e: User-Agent: Mozilla/5.0
+0067: Accept-Encoding: deflate, gzip
+0087: Accept: text/xml,application/xml,*/*
+00ad: Connection: close
+00c0: 
+== Info: Request completely sent off
+<= Recv header, 17 bytes (0x11)
+0000: HTTP/1.1 200 OK
+<= Recv header, 29 bytes (0x1d)
+0000: X-Backside-Transport: OK OK
+<= Recv header, 19 bytes (0x13)
+0000: Connection: close
+<= Recv header, 25 bytes (0x19)
+0000: User-Agent: Mozilla/5.0
+<= Recv header, 51 bytes (0x33)
+0000: X-Forwarded-For: 181.124.224.197, 181.124.224.197
+<= Recv header, 51 bytes (0x33)
+0000: X-Global-Transaction-ID: 7a332cb5697caeda46bb9ccf
+<= Recv header, 29 bytes (0x1d)
+0000: Cache-Control: no-transform
+<= Recv header, 24 bytes (0x18)
+0000: Content-Type: text/xml
+<= Recv header, 37 bytes (0x25)
+0000: Date: Fri, 30 Jan 2026 13:15:06 GMT
+<= Recv header, 30 bytes (0x1e)
+0000: Set-Cookie: ;HttpOnly;Secure
+<= Recv header, 29 bytes (0x1d)
+0000: X-FRAME-OPTIONS: SAMEORIGIN
+<= Recv header, 33 bytes (0x21)
+0000: X-XSS-Protection: 1; mode=block
+<= Recv header, 30 bytes (0x1e)
+0000: Referrer-Policy: same-origin
+<= Recv header, 33 bytes (0x21)
+0000: X-Content-Type-Options: nosniff
+<= Recv header, 325 bytes (0x145)
+0000: content-security-policy:   script-src 'self' 'unsafe-inline' 'un
+0040: safe-eval' ; style-src 'self' 'unsafe-inline' ; img-src 'self' b
+0080: lob: https://ekuatia.set.gov.py ; connect-src 'self' ; font-src 
+00c0: 'self' ; object-src 'self' ; media-src 'self' ; frame-src 'self'
+0100:  ; child-src 'self' ; form-action 'self' ; frame-ancestors 'none
+0140: ' ;
+<= Recv header, 309 bytes (0x135)
+0000: X-Content-Security-Policy: script-src 'self' 'unsafe-eval' ; sty
+0040: le-src 'self' 'unsafe-inline' ; img-src 'self' blob: https://eku
+0080: atia.set.gov.py ; connect-src 'self' ; font-src 'self' ; object-
+00c0: src 'self' ; media-src 'self' ; frame-src 'self' ; child-src 'se
+0100: lf' ; form-action 'self' ; frame-ancestors 'none' ;
+<= Recv header, 213 bytes (0xd5)
+0000: Feature-Policy:  geolocation 'none'; camera 'none'; microphone '
+0040: none'; midi 'none'; usb 'none'; magnetometer 'none'; fullscreen 
+0080: 'none'; payment 'none'; picture-in-picture 'none'; accelerometer
+00c0:  'none'; vr 'none' 
+<= Recv header, 64 bytes (0x40)
+0000: Strict-Transport-Security: max-age=15552000; includeSubDomains
+<= Recv header, 139 bytes (0x8b)
+0000: Set-Cookie: TS01a3a869=01f2e5fb23286a19ad17e2c736707dd31a9f1357b
+0040: fbd40c406a06776b8f393ca9e89d8ec32b0dc05f5cda913565e262d38d63527b
+0080: 2; Path=/
+<= Recv header, 23 bytes (0x17)
+0000: Vary: Accept-Encoding
+<= Recv header, 24 bytes (0x18)
+0000: Content-Encoding: gzip
+<= Recv header, 61 bytes (0x3d)
+0000: Set-Cookie: LastMRH_Session=9808bac5;path=/;secure;HttpOnly
+<= Recv header, 80 bytes (0x50)
+0000: Set-Cookie: MRHSession=0502ec8ae73d3c8838013c699808bac5;path=/;s
+0040: ecure;HttpOnly
+<= Recv header, 40 bytes (0x28)
+0000: Expires: Thu, 01 Dec 1994 16:00:00 GMT
+<= Recv header, 28 bytes (0x1c)
+0000: Transfer-Encoding: chunked
+<= Recv header, 2 bytes (0x2)
+0000: 
+<= Recv data, 29 bytes (0x1d)
+0000: 17
+0004: .......................
+<= Recv data, 5 bytes (0x5)
+0000: 0
+0003: 
+== Info: Closing connection

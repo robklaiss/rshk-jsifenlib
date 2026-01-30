@@ -1,0 +1,74 @@
+* Host sifen-test.set.gov.py:443 was resolved.
+* IPv6: (none)
+* IPv4: 201.131.51.6
+*   Trying 201.131.51.6:443...
+* Connected to sifen-test.set.gov.py (201.131.51.6) port 443
+* ALPN: curl offers http/1.1
+* (304) (OUT), TLS handshake, Client hello (1):
+} [319 bytes data]
+* (304) (IN), TLS handshake, Server hello (2):
+{ [81 bytes data]
+* TLSv1.2 (IN), TLS handshake, Certificate (11):
+{ [4186 bytes data]
+* TLSv1.2 (IN), TLS handshake, Server key exchange (12):
+{ [1039 bytes data]
+* TLSv1.2 (IN), TLS handshake, Request CERT (13):
+{ [18 bytes data]
+* TLSv1.2 (IN), TLS handshake, Server finished (14):
+{ [4 bytes data]
+* TLSv1.2 (OUT), TLS handshake, Certificate (11):
+} [2238 bytes data]
+* TLSv1.2 (OUT), TLS handshake, Client key exchange (16):
+} [262 bytes data]
+* TLSv1.2 (OUT), TLS handshake, CERT verify (15):
+} [264 bytes data]
+* TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):
+} [1 bytes data]
+* TLSv1.2 (OUT), TLS handshake, Finished (20):
+} [16 bytes data]
+* TLSv1.2 (IN), TLS change cipher, Change cipher spec (1):
+{ [1 bytes data]
+* TLSv1.2 (IN), TLS handshake, Finished (20):
+{ [16 bytes data]
+* SSL connection using TLSv1.2 / DHE-RSA-AES128-GCM-SHA256 / [blank] / UNDEF
+* ALPN: server did not agree on a protocol. Uses default.
+* Server certificate:
+*  subject: C=PY; L=Asunción; O=Dirección Nacional de Ingresos Tributarios; CN=*.set.gov.py
+*  start date: Sep 16 00:00:00 2025 GMT
+*  expire date: Oct  1 23:59:59 2026 GMT
+*  issuer: C=US; O=DigiCert Inc; CN=DigiCert Global G2 TLS RSA SHA256 2020 CA1
+*  SSL certificate verify ok.
+* using HTTP/1.x
+> POST /de/ws/consultas/consulta-ruc.wsdl HTTP/1.1
+> Host: sifen-test.set.gov.py
+> User-Agent: curl/8.7.1
+> Content-Type: application/soap+xml; charset=utf-8; action=""
+> Accept: application/soap+xml, text/xml, */*
+> Content-Length: 362
+> 
+} [362 bytes data]
+* upload completely sent off: 362 bytes
+< HTTP/1.1 200 OK
+< X-Backside-Transport: OK OK
+< Connection: Keep-Alive
+< accept: application/soap+xml, text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
+< content-type: application/soap+xml
+< date: Fri, 30 Jan 2026 13:24:34 GMT
+< set-cookie: 533ab42a0ee483401a1f251e17e6ec6f=faa69f5919c6ca47aad9026022c7d862; path=/; HttpOnly;HttpOnly;Secure
+< X-Global-Transaction-ID: 7a332cb5697cb11246bc921f
+< X-FRAME-OPTIONS: SAMEORIGIN
+< X-XSS-Protection: 1; mode=block
+< Referrer-Policy: same-origin
+< X-Content-Type-Options: nosniff
+< content-security-policy:   script-src 'self' 'unsafe-inline' 'unsafe-eval' ; style-src 'self' 'unsafe-inline' ; img-src 'self' blob: https://ekuatia.set.gov.py ; connect-src 'self' ; font-src 'self' ; object-src 'self' ; media-src 'self' ; frame-src 'self' ; child-src 'self' ; form-action 'self' ; frame-ancestors 'none' ;
+< X-Content-Security-Policy: script-src 'self' 'unsafe-eval' ; style-src 'self' 'unsafe-inline' ; img-src 'self' blob: https://ekuatia.set.gov.py ; connect-src 'self' ; font-src 'self' ; object-src 'self' ; media-src 'self' ; frame-src 'self' ; child-src 'self' ; form-action 'self' ; frame-ancestors 'none' ;
+< Feature-Policy:  geolocation 'none'; camera 'none'; microphone 'none'; midi 'none'; usb 'none'; magnetometer 'none'; fullscreen 'none'; payment 'none'; picture-in-picture 'none'; accelerometer 'none'; vr 'none' 
+< Strict-Transport-Security: max-age=15552000; includeSubDomains
+< Set-Cookie: TS01a3a869=01f2e5fb23f3256160e5b7e5cba9c4a003c30e0d499de26106ca6a40e543e7842501a50c788c751ea2a7b3768991c57696ab3a90ffb625bf6e1995da93bed4ab85ae3669de; Path=/
+< Set-Cookie: LastMRH_Session=c73c26ec;path=/;secure;HttpOnly
+< Set-Cookie: MRHSession=1be2fe1add5e570147cc3beac73c26ec;path=/;secure;HttpOnly
+< Expires: Thu, 01 Dec 1994 16:00:00 GMT
+< Transfer-Encoding: chunked
+< 
+{ [547 bytes data]
+* Connection #0 to host sifen-test.set.gov.py left intact
