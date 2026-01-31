@@ -19,3 +19,5 @@ backups/
 *.bak_*
 *.before_*
 backups/
+
+# --- local backups / baks (no versionar) ---
