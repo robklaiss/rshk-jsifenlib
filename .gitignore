@@ -13,3 +13,9 @@ artifacts/
 backups/
 *.bak_*.java
 *.bak_fix_*.java
+
+# Local backups / editor dumps
+*.bak
+*.bak_*
+*.before_*
+backups/
