@@ -42,7 +42,8 @@ public class DEMonedaExtranjeraTest extends DETestBase {
         gTimb.setdPunExp("002");
         gTimb.setdNumDoc("0000008");
         gTimb.setdFeIniT(LocalDate.parse("2019-07-24"));
-        de.setgTimb(gTimb);
+        
+gTimb.setdFeFinT(LocalDate.parse("2026-12-31"));de.setgTimb(gTimb);
 
         // Grupo D
         TdDatGralOpe dDatGralOpe = new TdDatGralOpe();

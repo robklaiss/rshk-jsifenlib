@@ -14,7 +14,7 @@ public class HTTPTests {
 
     @Test
     public void testWSDLConnection() throws SifenException {
-        String url = "https://sifen-test.set.gov.py/de/ws/consultas/consulta-ruc.wsdl?wsdl";
+        String url = "https://sifen-test.set.gov.py/de/ws/consultas/consulta-ruc";
 
         // IMPORTANT: cargar config desde -D... (System properties)
         SifenConfig cfg = new SifenConfig();

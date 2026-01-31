@@ -41,33 +41,75 @@ private static void setupHttpURLConnectionProperties(HttpsURLConnection httpsCon
 
     private static boolean isConsultaRuc(String urlString) {
         if (urlString == null) return false;
-        return urlString.contains("/consulta-ruc");
+        String u = urlString.toLowerCase();
+        return u.contains("consulta-ruc.wsdl") || u.contains("consulta-ruc");
     }
 
-private static void setupHttpURLConnectionHeaders(HttpsURLConnection httpsConnection, SifenConfig sifenConfig, String urlString) {
+    private static void setupHttpURLConnectionHeaders(HttpsURLConnection httpsConnection, SifenConfig sifenConfig, String urlString) {
+        // DEBUG: confirmar routing ConsRUC
+        try {
+            boolean __isConsRuc = isConsultaRuc(urlString);
+            logger.warning("DEBUG: setupHttpURLConnectionHeaders url=" + urlString + " isConsultaRuc=" + __isConsRuc);
+        } catch (Exception __e) {
+            logger.warning("DEBUG: setupHttpURLConnectionHeaders error evaluando isConsultaRuc: " + __e.getMessage());
+        }        // FIX ConsRUC (SIFEN TEST/PROD): ruteo correcto -> SOAP 1.2 Content-Type con action="siConsRUC"
+        if (isConsultaRuc(urlString)) {
+            httpsConnection.setRequestProperty("Accept", "application/soap+xml, text/xml, */*");
+            httpsConnection.setRequestProperty("Content-Type", "application/soap+xml; charset=utf-8; action=\"siConsRUC\"");
+            // No setear SOAPAction (eso es SOAP 1.1). En SOAP 1.2 va dentro de Content-Type.
+            return;
+        }
+
         httpsConnection.setRequestProperty("User-Agent", sifenConfig.getUserAgent());
 
-        if (isConsultaRuc(urlString) && urlString.contains("sifen-test.set.gov.py")) {
+        // --- consulta-ruc: casos especiales ---
+        if (isConsultaRuc(urlString) && urlString != null && urlString.contains("sifen-test.set.gov.py")) {
             // SIFEN TEST: reproducir request OK (application/xml + Accept tipo navegador + sin SOAPAction)
             httpsConnection.setRequestProperty("User-Agent", "rshk-jsifenlib/0.2.4 (LVEA)");
             httpsConnection.setRequestProperty("Content-Type", "application/xml; charset=utf-8");
             httpsConnection.setRequestProperty("Accept", "text/html, image/gif, image/jpeg, */*; q=0.2");
             httpsConnection.setRequestProperty("Connection", "keep-alive");
             logger.info("HTTP Headers (consulta-ruc TEST) - Content-Type: application/xml; charset=utf-8 ; no SOAPAction");
+            return; // IMPORTANT: no pisar con defaults
         } else if (isConsultaRuc(urlString)) {
-            // Fuera de TEST: mantener SOAPAction
+            // Fuera de TEST: SOAP 1.2 con action y SOAPAction (como venías usando)
             String contentType = "application/soap+xml; charset=utf-8; action=\"siConsRUC\"";
             httpsConnection.setRequestProperty("SOAPAction", "siConsRUC");
             httpsConnection.setRequestProperty("Content-Type", contentType);
+            httpsConnection.setRequestProperty("Accept", "application/soap+xml, text/xml, */*");
             logger.info("HTTP Headers (consulta-ruc) - Content-Type: " + contentType + " ; SOAPAction=siConsRUC");
+            return; // IMPORTANT: no pisar con defaults
+        }
+
+        // --- recibe-lote (async): SOAP 1.2 requiere action=siRecepLoteDE ---
+        boolean isRecibeLote = (urlString != null && urlString.contains("/async/recibe-lote"));
+        if (isRecibeLote) {
+            String contentType = "application/soap+xml; charset=utf-8; action=\"siRecepLoteDE\"";
+            httpsConnection.setRequestProperty("Content-Type", contentType);
+            httpsConnection.setRequestProperty("Accept", "application/soap+xml, text/xml, */*");
+            logger.info("HTTP Headers (recibe-lote) - Content-Type: " + contentType);
+            return;
         }
 
         // Default SOAP 1.2
+                // --- consulta-lote: endpoint quisquilloso (forzar close + action) ---
+        if (urlString.contains(sifenConfig.getPathConsultaLote()) || urlString.contains("/de/ws/consultas/consulta-lote")) {
+            // SOAP 1.2: algunos servers cortan si no viene action en Content-Type
+            String contentType = "application/soap+xml; charset=utf-8; action=\"siConsLoteDE\"";
+            httpsConnection.setRequestProperty("Content-Type", contentType);
+            httpsConnection.setRequestProperty("Accept", "application/soap+xml, text/xml, */*");
+            httpsConnection.setRequestProperty("Connection", "close");
+            // SOAPAction header vacío (soap12:operation soapAction="") – ayuda a ciertos gateways
+            httpsConnection.setRequestProperty("SOAPAction", "");
+            logger.info("HTTP Headers (consulta-lote) - Content-Type: " + contentType + " ; Connection=close ; SOAPAction=");
+            return;
+        }
+
         String contentType = "application/soap+xml; charset=utf-8";
         httpsConnection.setRequestProperty("Content-Type", contentType);
         httpsConnection.setRequestProperty("Accept", "application/soap+xml, text/xml, */*");
         logger.info("HTTP Headers - Content-Type: " + contentType);
-}
+    }
 
     public static SOAPMessage createSoapMessage() throws SOAPException {
         MessageFactory mf12 = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
@@ -146,16 +188,42 @@ public static SOAPMessage parseSoapMessage(InputStream is, String urlString)
             setupHttpURLConnectionProperties(httpsConnection, sifenConfig);
             setupHttpURLConnectionHeaders(httpsConnection, sifenConfig, urlString);
 
+
             // Conexión
             logger.info("Conectando a: " + url);
-            httpsConnection.connect();
-
             // Petición
             logger.info("Enviando mensaje SOAP");
 
-            soapMessage.writeTo(httpsConnection.getOutputStream());
+                        // --- DEBUG + FIX: evitar chunked y dumpear request real ---
+            byte[] __payload;
+            try (java.io.ByteArrayOutputStream __baos = new java.io.ByteArrayOutputStream()) {
+                soapMessage.writeTo(__baos);
+                __payload = __baos.toByteArray();
+            }
 
-            // Respuesta
+            // Dump del request (útil para 0160/connection reset)
+            try {
+                java.nio.file.Path __dir = java.nio.file.Paths.get("build", "tmp", "sifen");
+                java.nio.file.Files.createDirectories(__dir);
+                String __ts = java.time.LocalDateTime.now().format(
+                        java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
+                );
+                java.nio.file.Path __out = __dir.resolve("soap_request_" + __ts + ".xml");
+                java.nio.file.Files.write(__out, __payload);
+                logger.warning("DEBUG: SOAP request dump: " + __out.toAbsolutePath());
+                logger.warning("DEBUG: SOAP url=" + urlString + " bytes=" + __payload.length);
+            } catch (Exception __e) {
+                logger.warning("DEBUG: no pude dumpear SOAP request: " + __e.getMessage());
+            }
+
+            // Importante: fixed-length para evitar Transfer-Encoding: chunked (a veces corta el server)
+            httpsConnection.setFixedLengthStreamingMode(__payload.length);
+
+            try (java.io.OutputStream __os = httpsConnection.getOutputStream()) {
+                __os.write(__payload);
+                __os.flush();
+            }
+// Respuesta
             soapResponse.setStatus(httpsConnection.getResponseCode());
             InputStream inputStream;
             if (soapResponse.isRequestSuccessful()) {
@@ -165,6 +233,42 @@ public static SOAPMessage parseSoapMessage(InputStream is, String urlString)
             }
 
             byte[] readData = SifenUtil.getByteArrayFromInputStream(inputStream);
+
+            // --- DEBUG: guardar SIEMPRE el response (200 y errores) ---
+            try {
+                java.nio.file.Path __dir = java.nio.file.Paths.get("build", "tmp", "sifen");
+                java.nio.file.Files.createDirectories(__dir);
+                String __ts = java.time.LocalDateTime.now().format(
+                        java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
+                );
+                java.nio.file.Path __out = __dir.resolve("soap_response_" + soapResponse.getStatus() + "_" + __ts + ".xml");
+                java.nio.file.Files.write(__out, readData);
+                logger.warning("DEBUG: SOAP response dump: " + __out.toAbsolutePath());
+            } catch (Exception __e) {
+                logger.warning("DEBUG: no pude dumpear SOAP response: " + __e.getMessage());
+            }
+// DEBUG_DUMP_SOAP_ERROR_BEGIN
+        if (!soapResponse.isRequestSuccessful()) {
+            try {
+                java.nio.file.Path dir = java.nio.file.Paths.get("build", "tmp", "sifen");
+                java.nio.file.Files.createDirectories(dir);
+                String ts = java.time.LocalDateTime.now().format(
+                        java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
+                );
+                java.nio.file.Path out = dir.resolve("soap_error_" + soapResponse.getStatus() + "_" + ts + ".xml");
+                java.nio.file.Files.write(out, readData);
+
+                String body = new String(readData, java.nio.charset.StandardCharsets.UTF_8);
+                logger.warning("SOAP HTTP " + soapResponse.getStatus() + " — response guardada en: " + out.toAbsolutePath());
+                logger.warning("SOAP ERROR BODY (primeros 2000 chars):\n" +
+                        (body.length() > 2000 ? body.substring(0, 2000) + "…" : body)
+                );
+            } catch (Exception e) {
+                logger.warning("No pude guardar/loguear el SOAP error body: " + e.getMessage());
+            }
+        }
+        // DEBUG_DUMP_SOAP_ERROR_END
+
             SOAPMessage successSoapMessage = SoapHelper.parseSoapMessageAuto(readData);
 soapResponse.setSoapResponse(successSoapMessage);
             soapResponse.setRawData(readData);

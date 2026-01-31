@@ -25,6 +25,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import com.roshka.sifen.core.fields.response.TgResProc;
+import com.roshka.sifen.core.fields.response.batch.TgResProcLote;
 
 public class DETest extends DETestBase {
     @Test
@@ -50,7 +52,8 @@ public class DETest extends DETestBase {
         gTimb.setdPunExp("002");
         gTimb.setdNumDoc("0000007");
         gTimb.setdFeIniT(LocalDate.parse("2019-07-31"));
-        DE.setgTimb(gTimb);
+        
+gTimb.setdFeFinT(LocalDate.parse("2026-12-31"));DE.setgTimb(gTimb);
 
         // Grupo D
         TdDatGralOpe dDatGralOpe = new TdDatGralOpe();
@@ -230,7 +233,8 @@ public class DETest extends DETestBase {
         gTimb.setdPunExp("002");
         gTimb.setdNumDoc("0000008");
         gTimb.setdFeIniT(LocalDate.parse("2019-07-31"));
-        de.setgTimb(gTimb);
+        
+gTimb.setdFeFinT(LocalDate.parse("2026-12-31"));de.setgTimb(gTimb);
 
         // Grupo D
         TdDatGralOpe dDatGralOpe = new TdDatGralOpe();
@@ -386,6 +390,119 @@ public class DETest extends DETestBase {
     public void testValidacionDE() {
         ValidezFirmaDigital validity = Sifen.validarFirmaDE("D:\\de.xml");
         logger.info(validity.isValido() ? "Firma digital válida" : "Firma digital inválida");
+    }
+
+
+    @Test
+    public void testRecepcionLoteDE_asyncAndPoll() throws SifenException {
+
+        DocumentoElectronico de = setupDocumentoElectronico();
+
+        TgCamItem tgCamItem00 = createTgCamItem(
+                "001",
+                "Servicio de Liquidación de IVA",
+                BigDecimal.valueOf(1),
+                BigDecimal.valueOf(120000),
+                TcUniMed.UNI,
+                BigDecimal.valueOf(0)
+        );
+
+        TgCamItem tgCamItem01 = createTgCamItem(
+                "002",
+                "Servicio de Liquidación de IRP",
+                BigDecimal.valueOf(1),
+                BigDecimal.valueOf(88000),
+                TcUniMed.UNI,
+                BigDecimal.valueOf(1.3)
+        );
+
+        TgDtipDE tgDtipDE = de.getgDtipDE();
+        tgDtipDE.getgCamItemList().add(tgCamItem00);
+        tgDtipDE.getgCamItemList().add(tgCamItem01);
+
+        // 1) Envío async (encolado)
+        RespuestaRecepcionLoteDE rec = Sifen.recepcionLoteDE(Collections.singletonList(de));
+        Assert.assertEquals(200, rec.getCodigoEstado());
+        Assert.assertEquals("Esperaba 0300 (Lote recibido con éxito). Respuesta: dCodRes=" + rec.getdCodRes() + " dMsgRes=" + rec.getdMsgRes() + " dProtConsLote=" + rec.getdProtConsLote(), "0300", rec.getdCodRes());
+        Assert.assertEquals("Lote recibido con éxito", rec.getdMsgRes());
+
+        String prot = rec.getdProtConsLote();
+        Assert.assertNotNull("dProtConsLote debe venir (confirmación de encolado)", prot);
+        Assert.assertTrue("dProtConsLote no debe venir vacío", prot.trim().length() > 0);
+
+        logger.info("✅ ENCOLADO OK - dProtConsLote=" + prot + " dTpoProces=" + rec.getdTpoProces() + " dFecProc=" + rec.getdFecProc());
+
+        // 2) Polling: consulta estado del lote (async)
+        int maxAttempts = 12;      // ~1 min si d||mimos 5s
+        long sleepMs = 5000;
+
+        RespuestaConsultaLoteDE last = null;
+        boolean terminado = false;
+
+        for (int i = 1; i <= maxAttempts; i++) {
+            int __pollAttempt = 0;
+            while (true) {
+                try {
+                    last =Sifen.consultaLoteDE(prot);
+                    break;
+                } catch (com.roshka.sifen.core.exceptions.SifenException e) {
+                    String msg = (e.getMessage() == null) ? "" : e.getMessage();
+                    if (msg.contains("Connection reset") && __pollAttempt < 6) {
+                        __pollAttempt++;
+                        try { Thread.sleep(1200L); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
+                        continue;
+                    }
+                    throw e;
+                }
+            }
+            String cod = last.getdCodResLot();
+            String msg = last.getdMsgResLot();
+            int n = last.getgResProcLoteList() == null ? 0 : last.getgResProcLoteList().size();
+
+            logger.info(String.format("POLL %d/%d -> dCodResLot=%s dMsgResLot=%s items=%d",
+                    i, maxAttempts, cod, msg, n));
+
+            if (n > 0) {
+                boolean allHaveFinal = true;
+// (no usamos streams para mantenerlo simple)
+                allHaveFinal = true;
+                for (TgResProcLote it : last.getgResProcLoteList()) {
+                    String est = it.getdEstRes();
+                    logger.info("  - item id=" + it.getId() + " dEstRes=" + est + " dProtAut=" + it.getdProtAut()
+                            + " gResProc.size=" + (it.getgResProc() == null ? 0 : it.getgResProc().size()));
+                    if (it.getgResProc() != null) {
+                        for (TgResProc rp : it.getgResProc()) {
+                            logger.info("      * dCodRes=" + rp.getdCodRes() + " dMsgRes=" + rp.getdMsgRes());
+                        }
+                    }
+
+                    // Consideramos “final” cuando dEstRes ya no indica procesamiento
+                    if (est == null) {
+                        allHaveFinal = false;
+                    } else {
+                        String e = est.trim().toLowerCase();
+                        if (e.contains("proceso") || e.contains("proces")) {
+                            allHaveFinal = false;
+                    }
+                    }
+                }
+
+                if (allHaveFinal) {
+                    terminado = true;
+                    break;
+                }
+            }
+
+            try {
+                Thread.sleep(sleepMs);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+
+        Assert.assertNotNull("Debe existir al menos una respuesta de consulta", last);
+        Assert.assertTrue("El lote no llegó a estado final dentro del polling. Revisar logs.", terminado);
     }
 
 }

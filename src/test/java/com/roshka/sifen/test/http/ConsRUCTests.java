@@ -60,8 +60,9 @@ public class ConsRUCTests {
         // CLAVE: evitar chunked -> enviar Content-Length real
         conn.setFixedLengthStreamingMode(payload.length);
 
-        conn.setRequestProperty("Content-Type", "application/soap+xml; charset=utf-8; action=\"\"");
+        conn.setRequestProperty("Content-Type", "application/soap+xml; charset=utf-8; action=\"siConsRUC\"");
         conn.setRequestProperty("Accept", "application/soap+xml, text/xml, */*");
+        conn.setRequestProperty("SOAPAction", "siConsRUC");
         conn.setRequestProperty("User-Agent", "Mozilla/5.0");
         conn.setRequestProperty("Connection", "close");
         conn.setRequestProperty("Content-Length", String.valueOf(payload.length));

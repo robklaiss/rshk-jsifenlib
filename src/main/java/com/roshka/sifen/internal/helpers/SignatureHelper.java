@@ -56,6 +56,10 @@ public class SignatureHelper {
     }
 
     public static SignedInfo signDocument(SifenConfig sifenConfig, SOAPElement signatureParentNode, String signedNodeId) throws SifenException {
+        // FIX: XMLDSig necesita que el atributo "Id" esté registrado como tipo ID en el DOM
+        Document doc = signatureParentNode.getOwnerDocument();
+        try { markIdAttributes(doc.getDocumentElement()); } catch (Exception ignored) {}
+
         try {
             Reference ref = _xmlSignatureFactory.newReference("#" + signedNodeId,
                     _xmlSignatureFactory.newDigestMethod(DigestMethod.SHA256, null),
@@ -248,4 +252,24 @@ public class SignatureHelper {
             return null;
         }
     }
+
+    // FIX: XMLDSig necesita que el atributo "Id" esté registrado como ID en el DOM,
+    // sino falla con: "Cannot resolve element with ID ..."
+    private static void markIdAttributes(org.w3c.dom.Element el) {
+        if (el == null) return;
+        if (el.hasAttribute("Id")) {
+            try { el.setIdAttribute("Id", true); } catch (Exception ignored) {}
+        }
+        if (el.hasAttribute("id")) {
+            try { el.setIdAttribute("id", true); } catch (Exception ignored) {}
+        }
+        org.w3c.dom.Node n = el.getFirstChild();
+        while (n != null) {
+            if (n instanceof org.w3c.dom.Element) {
+                markIdAttributes((org.w3c.dom.Element) n);
+            }
+            n = n.getNextSibling();
+        }
+    }
+
 }

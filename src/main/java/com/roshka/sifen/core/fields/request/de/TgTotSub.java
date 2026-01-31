@@ -131,12 +131,12 @@ public class TgTotSub extends SifenObjectBase {
         }
 
         gTotSub.addChildElement("dTotOpe").setTextContent(String.valueOf(this.dTotOpe));
-        gTotSub.addChildElement("dTotDesc").setTextContent(String.valueOf(this.dTotDesc));
-        gTotSub.addChildElement("dTotDescGlotem").setTextContent(String.valueOf(this.dTotDescGlotem));
+        gTotSub.addChildElement("dTotDesc").setTextContent(this.dTotDesc.setScale(2, RoundingMode.HALF_UP).toPlainString());
+        gTotSub.addChildElement("dTotDescGlotem").setTextContent(this.dTotDescGlotem.setScale(2, RoundingMode.HALF_UP).toPlainString());
         gTotSub.addChildElement("dTotAntItem").setTextContent(String.valueOf(this.dTotAntItem));
         gTotSub.addChildElement("dTotAnt").setTextContent(String.valueOf(this.dTotAnt));
         gTotSub.addChildElement("dPorcDescTotal").setTextContent(String.valueOf(this.dPorcDescTotal));
-        gTotSub.addChildElement("dDescTotal").setTextContent(String.valueOf(this.dDescTotal));
+        gTotSub.addChildElement("dDescTotal").setTextContent(this.dDescTotal.setScale(2, RoundingMode.HALF_UP).toPlainString());
         gTotSub.addChildElement("dAnticipo").setTextContent(String.valueOf(this.dAnticipo));
         // se agregó control para formatear con 4 decimales
         gTotSub.addChildElement("dRedon").setTextContent(formattdCRed(this.dRedon));

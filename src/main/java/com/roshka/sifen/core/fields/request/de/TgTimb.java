@@ -19,6 +19,7 @@ public class TgTimb extends SifenObjectBase {
     private String dNumDoc;     // número de documento: patron ej: 0192312
     private String dSerieNum;   // número de serie del timbrado (opcional)
     private LocalDate dFeIniT;  // fecha de inicio de vigencia del timbrado
+    private LocalDate dFeFinT;  // fecha de fin de vigencia del timbrado
 
     public void setupSOAPElements(SOAPElement DE) throws SOAPException {
         SOAPElement gTimb = DE.addChildElement("gTimb");
@@ -31,6 +32,9 @@ public class TgTimb extends SifenObjectBase {
         if (this.dSerieNum != null)
             gTimb.addChildElement("dSerieNum").setTextContent(this.dSerieNum);
         gTimb.addChildElement("dFeIniT").setTextContent(this.dFeIniT.toString());
+        if (this.dFeFinT != null) {
+            gTimb.addChildElement("dFeFinT").setTextContent(this.dFeFinT.toString());
+        }
     }
 
     @Override
@@ -56,6 +60,9 @@ public class TgTimb extends SifenObjectBase {
                 break;
             case "dFeIniT":
                 this.dFeIniT = ResponseUtil.getDateValue(value);
+                break;
+            case "dFeFinT":
+                this.dFeFinT = ResponseUtil.getDateValue(value);
                 break;
         }
     }
@@ -114,5 +121,13 @@ public class TgTimb extends SifenObjectBase {
 
     public void setdFeIniT(LocalDate dFeIniT) {
         this.dFeIniT = dFeIniT;
+    }
+
+    public LocalDate getdFeFinT() {
+        return dFeFinT;
+    }
+
+    public void setdFeFinT(LocalDate dFeFinT) {
+        this.dFeFinT = dFeFinT;
     }
 }

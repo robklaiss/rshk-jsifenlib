@@ -33,7 +33,7 @@ public class TgValorRestaItem extends SifenObjectBase {
         SOAPElement gValorRestaItem = gValorItem.addChildElement("gValorRestaItem");
 
         if (this.dDescItem != null) {
-            gValorRestaItem.addChildElement("dDescItem").setTextContent(String.valueOf(this.dDescItem));
+            gValorRestaItem.addChildElement("dDescItem").setTextContent(this.dDescItem.setScale(2, RoundingMode.HALF_UP).toPlainString());
 
             this.dPorcDesIt = this.dDescItem.multiply(BigDecimal.valueOf(100)).divide(dPUniProSer, 2, RoundingMode.HALF_UP);
             gValorRestaItem.addChildElement("dPorcDesIt").setTextContent(String.valueOf(this.dPorcDesIt));

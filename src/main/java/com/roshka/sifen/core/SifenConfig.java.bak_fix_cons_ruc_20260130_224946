@@ -107,7 +107,15 @@ public class SifenConfig {
         this.pathEvento = "/de/ws/eventos/evento";
         this.pathConsultaLote = "/de/ws/consultas/consulta-lote.wsdl";
         this.pathConsultaRUC = "/de/ws/consultas/consulta-ruc";
-this.pathConsulta = "/de/ws/consultas/consulta";
+        // SIFEN TEST quirk: ConsRUC funciona estable posteando al endpoint WSDL con Content-Type application/xml
+        // y sin SOAPAction. En TEST, el endpoint correcto es ".../consulta-ruc.wsdl".
+        try {
+            if (this.urlBase != null && this.urlBase.contains("sifen-test.set.gov.py")) {
+                this.pathConsultaRUC = "/de/ws/consultas/consulta-ruc.wsdl";
+            }
+        } catch (Exception ignored) {}
+
+        this.pathConsulta = "/de/ws/consultas/consulta";
         this.usarCertificadoCliente = true;
 
         this.idCSC = "0002";
@@ -280,11 +288,9 @@ this.pathConsulta = "/de/ws/consultas/consulta";
         if (this.ambiente == TipoAmbiente.DEV) {
             this.urlBaseLocal = URL_BASE_DEV;
             this.urlConsultaQr = URL_CONSULTA_QR_DEV;
-            this.pathConsultaRUC = "/de/ws/consultas/consulta-ruc";
         } else if (this.ambiente == TipoAmbiente.PROD) {
             this.urlBaseLocal = URL_BASE_PROD;
             this.urlConsultaQr = URL_CONSULTA_QR_PROD;
-            this.pathConsultaRUC = "/de/ws/consultas/consulta-ruc";
         }
     }
 

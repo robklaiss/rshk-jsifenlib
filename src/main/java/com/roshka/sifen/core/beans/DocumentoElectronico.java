@@ -274,7 +274,10 @@ public class DocumentoElectronico extends SifenObjectBase {
         SOAPElement rDE = parentNode.addChildElement(new QName(Constants.SIFEN_NS_URI, "rDE"));
 
         rDE.addNamespaceDeclaration("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        // Recepción (incluye lote): rDE debe apuntar a siRecepDE_v150.xsd
         rDE.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:schemaLocation", Constants.SIFEN_NS_URI_RECEP_DE);
+// rDE.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:schemaLocation", Constants.SIFEN_NS_URI_RECEP_DE);
+        // NOTE: en lote (rLoteDE) esto puede causar 0160 si apunta a siRecepDE_v150.xsd
         rDE.addChildElement("dVerFor").setTextContent(SIFEN_CURRENT_VERSION);
 
         this.obtenerCDC(receivedCDC);

@@ -10,3 +10,6 @@ _runner/conf/sifen.properties
 _runner/build/
 _runner/.gradle/
 artifacts/
+backups/
+*.bak_*.java
+*.bak_fix_*.java

@@ -17,6 +17,8 @@ import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -56,7 +58,18 @@ public class ReqRecLoteDe extends BaseRequest {
             rEnvioLote.addChildElement("dId").setTextContent(String.valueOf(this.getdId()));
             SOAPElement xDE = rEnvioLote.addChildElement("xDE");
 
-            SOAPElement rLoteDE = SoapHelper.createSoapMessage().getSOAPBody().addChildElement("rLoteDE");
+            SOAPMessage tmpMsg = SoapHelper.createSoapMessage();
+              SOAPBody tmpBody = tmpMsg.getSOAPBody();
+              SOAPBodyElement rLoteDE = tmpBody.addBodyElement(new QName(Constants.SIFEN_NS_URI, "rLoteDE"));
+
+                // FIX 0160: declarar xsi + schemaLocation a nivel rLoteDE
+                rLoteDE.addNamespaceDeclaration("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+                rLoteDE.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:schemaLocation",
+                        Constants.SIFEN_NS_URI + " rLoteDE_v150.xsd");
+
+
+                // FIX: en envío por lote, dVerFor debe existir también a nivel rLoteDE
+                rLoteDE.addChildElement("dVerFor").setTextContent("150");
             for (DocumentoElectronico DE : DEList) {
                 DE.setupDE(generationCtx, rLoteDE, this.getSifenConfig());
             }
@@ -65,14 +78,51 @@ public class ReqRecLoteDe extends BaseRequest {
             // Obtenemos el XML
             final StringWriter sw = new StringWriter();
             try {
-                TransformerFactory.newInstance().newTransformer().transform(new DOMSource(rLoteDE), new StreamResult(sw));
+                Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                // Configurar sin indentación para preservar canonicalización XMLDSig
+                transformer.setOutputProperty(OutputKeys.INDENT, "no");
+                transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "0");
+                transformer.transform(new DOMSource(rLoteDE), new StreamResult(sw));
             } catch (TransformerException e) {
                 throw new RuntimeException(e);
             }
 
+
+              // DEBUG_DUMP_RLOTEDE_BEGIN
+              try {
+                  java.nio.file.Path dir = java.nio.file.Paths.get("build", "tmp", "sifen");
+                  java.nio.file.Files.createDirectories(dir);
+                  String ts = java.time.LocalDateTime.now().format(
+                          java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
+                  );
+
+                  String xmlRaw = sw.toString();
+                  java.nio.file.Path outXml = dir.resolve("rLoteDE_raw_" + ts + ".xml");
+                  java.nio.file.Files.write(outXml, xmlRaw.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                  logger.warning("DEBUG: rLoteDE RAW guardado en: " + outXml.toAbsolutePath());
+
+              } catch (Exception e) {
+                  logger.warning("DEBUG: no pude guardar rLoteDE RAW: " + e.getMessage());
+              }
+              // DEBUG_DUMP_RLOTEDE_END
             // Comprimimos a un archivo zip
             byte[] zipFile = SifenUtil.compressXmlToZip(sw.toString());
 
+
+              // DEBUG_DUMP_RLOTEDE_BEGIN
+              try {
+                  java.nio.file.Path dir = java.nio.file.Paths.get("build", "tmp", "sifen");
+                  java.nio.file.Files.createDirectories(dir);
+                  String ts = java.time.LocalDateTime.now().format(
+                          java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
+                  );
+                  java.nio.file.Path outZip = dir.resolve("rLoteDE_zip_" + ts + ".zip");
+                  java.nio.file.Files.write(outZip, zipFile);
+                  logger.warning("DEBUG: rLoteDE ZIP guardado en: " + outZip.toAbsolutePath());
+              } catch (Exception e) {
+                  logger.warning("DEBUG: no pude guardar rLoteDE ZIP: " + e.getMessage());
+              }
+              // DEBUG_DUMP_RLOTEDE_END
             // Convertimos el zip a Base64
             String rLoteDEBase64 = new String(Base64.getEncoder().encode(zipFile), StandardCharsets.UTF_8);
             xDE.setTextContent(rLoteDEBase64);

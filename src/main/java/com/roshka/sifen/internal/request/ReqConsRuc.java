@@ -36,7 +36,7 @@ public class ReqConsRuc extends BaseRequest {
     SOAPMessage setupSoapMessage(GenerationCtx generationCtx) throws SifenException {
         try {
             // Main Element
-            SOAPMessage message = SoapHelper.createSoapMessage11();
+            SOAPMessage message = SoapHelper.createSoapMessage();
 SOAPBody soapBody = message.getSOAPBody();
             SOAPBodyElement rResEnviConsRUC = soapBody.addBodyElement(new QName(Constants.SIFEN_NS_URI, "rEnviConsRUC"));
 
